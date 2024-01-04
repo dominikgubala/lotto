@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Dominik Gubala">
+    <title>Generowanie liczb typu lotto</title>
+
+    <style type="text/css">
+        body {
+            font-family: Arial;
+        }
+        #result {
+            display: flex;
+            height: 4rem;
+        }
+        #result .number {
+            display: grid;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            margin: 0.5rem;
+            background-color: lightgreen;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+        .action {
+            padding-top: 1rem;
+        }
+        button {
+            font-weight: 600;
+            cursor: pointer;
+            width: 5rem;
+            height: 2rem;
+            border: unset;
+            border-radius: 0.1rem;
+        }
+        button#generate {
+            background-color: rgb(135, 206, 206);
+        }
+        button#generate:hover {
+            background-color: rgb(145, 210, 210);
+        }
+        button#reset {
+            background-color: rgb(211, 211, 211);
+        }
+        button#reset:hover {
+            background-color: rgb(220, 220, 220);
+        }
+    </style>
+</head>
+<body>
+
+<h1>Generowanie liczb typu lotto</h1>
+
+<div id="result">
+    <div class="number"></div>
+    <div class="number"></div>
+    <div class="number"></div>
+    <div class="number"></div>
+    <div class="number"></div>
+    <div class="number"></div>
+</div>
+<hr>
+<div class="action">
+    <button id="generate">Generuj</button>
+    <button id="reset">Reset</button>
+</div>
+
+<script>
+    const d = document;
+    const generateBtn = d.getElementById('generate');
+    const resetBtn = d.getElementById('reset');
+    const resultArea = d.getElementById('result');
+
+    let result = []; // Tablica przechowująca wylosowane liczby
+    let counter = 0; // Licznik wylosowanych liczb
+
+    /**
+     * Funkcja losuje liczbe, z wykorzystaniem metod Math.random() oraz Math.floor,
+     * wewnatrz ktorych mnozymy razy 49 i dodajemy liczbe 1, zeby losowanie bylo miedzy 1 a 49
+     * Math.random() - zwraca liczbe zmiennoprzecinkowa z zakresu od 0 (wlacznie) do 1 (wylacznie)
+     * Math.floor - zaokragla wylosowana liczbe do liczby calkowitej
+     */
+    const numberGenerator = () => {
+
+        const number = Math.floor(Math.random() * 49 + 1);
+
+        /**
+         * W pętli sprawdzamy, czy wylosowana liczba istnieje już w tablicy
+         * Jeśli wylosowana liczba już istnieje, następuje rekurencja funkcji numberGenerator()
+         */
+        for (let i = 0; i < result.length; i++) {
+            if (number === result[i]) {
+                return numberGenerator();
+            }
+        }
+
+        /**
+         * Ponizej dodajemy wulosowane elementy do tablicy,
+         * a nastepnie uzupelniamy odpowiednia elementy HTML o wylosowane liczby
+         */
+        result.push(number);
+        resultArea.children[counter].textContent = number;
+
+        counter++;
+
+        // Blokujemy przycisk do generowania, jesli liczba wylosowanych liczb wynosi 6
+        if (counter === 6) {
+            generateBtn.disabled = true;
+        }
+    };
+
+    /**
+     * Funkcja resetuje zmienne do stanu poczatkowego,
+     * co umozliwia ponowne generowanie liczb
+     */
+    const resetApp = () => {
+        result = [];
+        counter = 0;
+        generateBtn.disabled = false;
+
+        for (const element of resultArea.children) {
+            element.textContent = null;
+        }
+    };
+
+    // Po kliknieciu w dany przycisk, aktywuje sie funkcja do niego przypisana
+    generateBtn.onclick = numberGenerator;
+    resetBtn.onclick = resetApp;
+</script>
+</body>
+</html>
